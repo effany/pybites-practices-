@@ -1,7 +1,9 @@
 from collections import Counter
 from contextlib import contextmanager
 from datetime import date
-from time import time
+from time import time, sleep
+
+
 
 OPERATION_THRESHOLD_IN_SECONDS = 2.2
 ALERT_THRESHOLD = 3
@@ -17,4 +19,18 @@ def get_today():
 
 @contextmanager
 def timeit():
-    pass
+    start_time = time()
+    yield
+    elapsed = time() - start_time
+    if elapsed > OPERATION_THRESHOLD_IN_SECONDS and date.today() == get_today():
+        violations[get_today()] += 1
+    if violations[get_today()] >= ALERT_THRESHOLD:
+        print(ALERT_MSG)
+        
+
+with timeit():
+    print('hi')
+    print(get_today())
+    for count in range(5):
+        sleep(0.5)
+
