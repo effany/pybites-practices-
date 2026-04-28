@@ -1,0 +1,12 @@
+envlist =
+    py3
+    flake8
+    docs
+    isort
+
+envlist = py27, py34, py35, py36, pypy, flake8
+
+envlist =
+    lint,
+    py34,py35,py36,py37,pypy3,
+    docs,py36-cover,coverage,
