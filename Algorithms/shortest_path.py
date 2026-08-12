@@ -11,19 +11,36 @@ def shortest_path(graph, start, end):
        Ex.   (distance, ['a', 'c', 'd', 'b])
     """
     cost_table = {}
+    prev = {}
 
-    for key, value in graph.items(): 
-        cost_table[key] = float('inf')
-        visited = [start]
-        cost = 0
-        if end in graph[key]:
-            print(graph[key])
-            cost += graph[key][end]
-        else:
-            pass
-        print(cost)
-    
-            
+    for city in graph:
+        cost_table[city] = float("inf")
+    cost_table[start] = 0
+
+    changed = True
+
+    while changed:
+        changed = False
+        for current in graph:
+            print(current)
+            if cost_table[current] == float("inf"):
+                continue
+
+            for neighbor, edge_cost in graph[current].items():
+                new_cost = cost_table[current] + edge_cost
+                if new_cost < cost_table[neighbor]:
+                    cost_table[neighbor] = new_cost
+                    prev[neighbor] = current
+                    changed = True
+    print('cost_table:', cost_table)
+
+    path = [end]
+    while path[-1] != start:
+        path.append(prev[path[-1]])
+    path.reverse()
+
+    return cost_table[end], path
+
         
 
 
@@ -35,4 +52,4 @@ simple = {
           'e': {'a': 1, 'd': 2}
           }
 
-shortest_path(simple, 'a', 'd')
+print(shortest_path(simple, "a", "d"))
