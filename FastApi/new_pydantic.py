@@ -1,0 +1,53 @@
+from datetime import datetime
+from typing import Any
+
+from passlib.context import CryptContext
+from pydantic import BaseModel, model_validator, Field
+
+# https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/
+# which we'll further explore in a later Bite
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
+def get_password_hash(password):
+    return pwd_context.hash(password)
+
+
+class Food(BaseModel):
+    """Bite 02"""
+
+    id: int
+    name: str
+    serving_size: str
+    kcal_per_serving: int
+    protein_grams: float
+    fibre_grams: float = 0
+
+
+# Write the User and FoodEntry models here ...
+
+class User(BaseModel):
+    id: int
+    username: str
+    password: str
+
+    @model_validator(mode='before')
+    @classmethod
+    def hash_password(cls, data):
+        if isinstance(data, dict) and 'password' in data:
+            data['password'] = get_password_hash(data['password'])
+        return data
+
+
+class FoodEntry(BaseModel):
+    id: int
+    user: User
+    food: Food
+    date_added: datetime = Field(default_factory=datetime.now)
+    number_servings: float
+
+    @property
+    def total_calories(self):
+        return self.number_servings * self.food.kcal_per_serving
+    
+    
